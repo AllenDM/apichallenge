@@ -2,10 +2,12 @@
 #   Author: AllenDM Allen Moody
 import ast
 import requests
-
+import dateutil.parser
+import dateutil.relativedelta
 # Step 1
 token = input("Enter API Token: ")
-requests.post("http://challenge.code2040.org/api/register", data = {'token' : token, 'github': 'https://github.com/AllenDM/apichallenge'})
+register = {'token': token, 'github': 'https://github.com/AllenDM/apichallenge'}
+requests.post("http://challenge.code2040.org/api/register", data = register)
 
 # Step 2
 plainToken = {'token': token}
@@ -31,3 +33,15 @@ for x in prefixMap['array']:
 	    solution.append(x)
 prefixSubmit = {'token': token, 'array': solution}	    
 requests.post("http://challenge.code2040.org/api/prefix/validate", json = prefixSubmit)
+
+#Step 5
+dateData = requests.post("http://challenge.code2040.org/api/dating", data = plainToken)
+dateMap = ast.literal_eval(dateData.text)
+dateStamp = dateutil.parser.parse(dateMap['datestamp'])
+newDate = dateStamp+dateutil.relativedelta.relativedelta(seconds=+dateMap['interval'])
+newDate = newDate.isoformat()
+newDateString = str(newDate)
+if newDateString[19:] == "+00:00":
+	newDateString = newDateString[:19] + "Z"
+dateSolution = {'token': token, 'datestamp': newDateString}
+requests.post("http://challenge.code2040.org/api/dating/validate", json = dateSolution)
