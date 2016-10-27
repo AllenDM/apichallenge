@@ -4,6 +4,7 @@ import ast
 import requests
 import dateutil.parser
 import dateutil.relativedelta
+
 # Step 1
 token = input("Enter API Token: ")
 register = {'token': token, 'github': 'https://github.com/AllenDM/apichallenge'}
